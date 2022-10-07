@@ -18,7 +18,8 @@ def clear_console():
 
 def load_water_temp(filename):
     df = pd.read_csv(filename)
-    df.rename(columns={'Value': 'TemperatureOffset', 'Year':'ReportedYear'}, inplace=True)
+    df.rename(columns={'Value': 'TemperatureOffsetC', 'Year':'ReportedYear'}, inplace=True)
+    df['TemperatureOffsetF'] = df['TemperatureOffsetC'] * 1.8
 
     return df
 
@@ -101,20 +102,18 @@ def main():
     df_hurricane = load_file_to_df(excelFile)
 
     df_hurricane['HurricaneFlag'] = df_hurricane.apply(lambda row: categorize(row), axis=1)
-    print(df_hurricane.head())
+    # print(df_hurricane.head())
 
     df_watertemp = load_water_temp(water_file_name)
-    print(df_watertemp.head())
+    # print(df_watertemp)
 
     df_joined = pd.merge(df_hurricane, df_watertemp, how='inner', on=['ReportedYear','ReportedYear'])
 
-    print(df_joined.head())
+    print(df_joined)
 
-    # print(df_watertemp.head())
+    number_of_hurricanes(df_joined)
 
-    number_of_hurricanes(df_hurricane)
-
-    strength_of_hurricanes(df_hurricane)
+    strength_of_hurricanes(df_joined)
 
 
 

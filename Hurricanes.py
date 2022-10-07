@@ -16,6 +16,12 @@ def clear_console():
 
     os.system(command)
 
+def load_water_temp(filename):
+    df = pd.read_csv(filename)
+    df.rename(columns={'Value': 'TemperatureOffset', 'Year':'ReportedYear'}, inplace=True)
+
+    return df
+
 def load_file_to_df(filename):
     df = pd.read_excel(filename, sheet_name="RawData")
     #Year, Month, StatesAffectedWithCategory, HighestCategory, CentralPressure_mb, MaxWind_kt, Name
@@ -82,17 +88,29 @@ def main():
     if platform == "darwin":
         os_platform = "Mac"
         excelFile = currentDirectory + "/HurricaneData.xlsx"
+        water_file_name = currentDirectory + "/WaterTemperature.csv"
         os.chdir(currentDirectory)
         clear_console()
     else:
         os_platform = "Windows"
         excelFile = currentDirectory + "\\HurricaneData.xlsx"
+        water_file_name = currentDirectory + "\\WaterTemperature.csv"
         os.chdir(currentDirectory)
         clear_console()
 
     df_hurricane = load_file_to_df(excelFile)
 
     df_hurricane['HurricaneFlag'] = df_hurricane.apply(lambda row: categorize(row), axis=1)
+    print(df_hurricane.head())
+
+    df_watertemp = load_water_temp(water_file_name)
+    print(df_watertemp.head())
+
+    df_joined = pd.merge(df_hurricane, df_watertemp, how='inner', on=['ReportedYear','ReportedYear'])
+
+    print(df_joined.head())
+
+    # print(df_watertemp.head())
 
     number_of_hurricanes(df_hurricane)
 

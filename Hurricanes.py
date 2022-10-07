@@ -109,11 +109,23 @@ def main():
 
     df_joined = pd.merge(df_hurricane, df_watertemp, how='inner', on=['ReportedYear','ReportedYear'])
 
-    print(df_joined)
+    # print(df_joined)
 
-    number_of_hurricanes(df_joined)
+    # print(df_joined.dtypes)
 
-    strength_of_hurricanes(df_joined)
+    x = pd.Series(df_joined['MaxWind_mph'])
+    y = pd.Series(df_joined['TemperatureOffsetF'])
+
+    # print(x)
+    # print(y)
+
+    print(x.corr(y))     # Pearson's r
+    print(x.corr(y, method='spearman'))
+    print(x.corr(y, method='kendall'))
+
+    # number_of_hurricanes(df_joined)
+
+    # strength_of_hurricanes(df_joined)
 
 
 
